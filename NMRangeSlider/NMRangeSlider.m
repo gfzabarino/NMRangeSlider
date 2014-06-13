@@ -739,13 +739,13 @@ NSUInteger DeviceSystemMajorVersion() {
 
 - (void)onRangeSliderValueChange:(id)sender {
     float padding = self.rangeSlider.lowerHandleImageNormal.size.width / 2.0f;
-    float lowerValue = (self.rangeSlider.lowerCenter.x - padding) / [self lowerTotalWidth] * (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue);
+    _lowerValue = (self.rangeSlider.lowerCenter.x - padding) / [self lowerTotalWidth] * (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue);
     padding = [self minimumUpperValueInPoints];
-    float upperValue = (self.rangeSlider.upperCenter.x - padding) / [self upperTotalWidth] * (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue);
+    _upperValue = (self.rangeSlider.upperCenter.x - padding) / [self upperTotalWidth] * (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue);
     if ([self.delegate respondsToSelector:@selector(rangeSliderAutomaticMinimumRangeHelper:onValuesChangeWithLowerValue:upperValue:)]) {
         [self.delegate rangeSliderAutomaticMinimumRangeHelper:self
-                                 onValuesChangeWithLowerValue:lowerValue
-                                                   upperValue:upperValue];
+                                 onValuesChangeWithLowerValue:self.lowerValue
+                                                   upperValue:self.upperValue];
     }
 }
 
@@ -787,6 +787,24 @@ NSUInteger DeviceSystemMajorVersion() {
         self.rangeSlider.minimumRange = ([self minimumUpperValueInPoints] - self.rangeSlider.lowerHandleImageNormal.size.width / 2.0f) / totalWidth * (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue);
     }
 }
+
+#pragma mark - Override accessors
+
+- (void)setLowerValue:(float)lowerValue {
+    _lowerValue = lowerValue;
+    float padding = self.rangeSlider.lowerHandleImageNormal.size.width / 2.0f;
+    float centerX = _lowerValue / (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue) * [self lowerTotalWidth] + padding;
+    self.rangeSlider.lowerValue = [self.rangeSlider lowerValueForCenterX:centerX];
+}
+
+- (void)setUpperValue:(float)upperValue {
+    _upperValue = upperValue;
+    float padding = [self minimumUpperValueInPoints];
+    float centerX = _upperValue / (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue) * [self upperTotalWidth] + padding;
+    self.rangeSlider.upperValue = [self.rangeSlider upperValueForCenterX:centerX];
+}
+
+#pragma mark - Dealloc
 
 - (void)dealloc {
     self.rangeSlider = nil;

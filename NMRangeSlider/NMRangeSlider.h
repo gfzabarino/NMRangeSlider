@@ -92,6 +92,8 @@
 @property(nonatomic, strong) NMRangeSlider *rangeSlider;
 @property(nonatomic, assign) float lowerRightTransparencyWidth;
 @property(nonatomic, assign) float upperLeftTransparencyWidth;
+@property(nonatomic, assign) float lowerValue;
+@property(nonatomic, assign) float upperValue;
 @property(nonatomic, weak) id<NMRangeSliderAutomaticMinimumRangeHelperDelegate> delegate;
 
 @end
