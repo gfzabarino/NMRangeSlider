@@ -715,6 +715,11 @@ NSUInteger DeviceSystemMajorVersion() {
         }
         _rangeSlider = rangeSlider;
         if (_rangeSlider) {
+            if ([_rangeSlider superview]) {
+                [[_rangeSlider superview] layoutIfNeeded];
+            } else {
+                [_rangeSlider layoutIfNeeded];
+            }
             [_rangeSlider addTarget:self
                              action:@selector(onRangeSliderValueChange:)
                    forControlEvents:UIControlEventValueChanged];
@@ -795,6 +800,7 @@ NSUInteger DeviceSystemMajorVersion() {
     float padding = self.rangeSlider.lowerHandleImageNormal.size.width / 2.0f;
     float centerX = _lowerValue / (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue) * [self lowerTotalWidth] + padding;
     self.rangeSlider.lowerValue = [self.rangeSlider lowerValueForCenterX:centerX];
+    [self.rangeSlider layoutIfNeeded];
 }
 
 - (void)setUpperValue:(float)upperValue {
@@ -802,6 +808,7 @@ NSUInteger DeviceSystemMajorVersion() {
     float padding = [self minimumUpperValueInPoints];
     float centerX = _upperValue / (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue) * [self upperTotalWidth] + padding;
     self.rangeSlider.upperValue = [self.rangeSlider upperValueForCenterX:centerX];
+    [self.rangeSlider layoutIfNeeded];
 }
 
 #pragma mark - Dealloc
