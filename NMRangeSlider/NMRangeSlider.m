@@ -677,3 +677,119 @@ NSUInteger DeviceSystemMajorVersion() {
 }
 
 @end
+
+@interface NMRangeSliderAutomaticMinimumRangeHelper()
+
+- (void)onRangeSliderValueChange:(id)sender;
+- (float)minimumUpperValueInPoints;
+- (float)maximumLowerValueInPoints;
+- (float)upperTotalWidth;
+- (float)lowerTotalWidth;
+- (void)updateRangeSliderMinimumRange;
+
+@end
+
+@implementation NMRangeSliderAutomaticMinimumRangeHelper
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        // default transparency widths for bundled handle images (at least iOS 7)
+        _lowerRightTransparencyWidth = 6.0f;
+        _upperLeftTransparencyWidth = 6.0f;
+    }
+    return self;
+}
+
+- (void)setRangeSlider:(NMRangeSlider *)rangeSlider {
+    if (_rangeSlider != rangeSlider) {
+        NSArray *keypaths = @[@"minimumValue", @"maximumValue", @"frame"];
+        if (_rangeSlider) {
+            [_rangeSlider removeTarget:self
+                                action:@selector(onRangeSliderValueChange:)
+                      forControlEvents:UIControlEventValueChanged];
+            for (NSString *keypath in keypaths) {
+                [_rangeSlider removeObserver:self
+                                  forKeyPath:keypath];
+            }
+        }
+        _rangeSlider = rangeSlider;
+        if (_rangeSlider) {
+            [_rangeSlider addTarget:self
+                             action:@selector(onRangeSliderValueChange:)
+                   forControlEvents:UIControlEventValueChanged];
+            for (NSString *keypath in keypaths) {
+                [_rangeSlider addObserver:self
+                               forKeyPath:keypath
+                                  options:NSKeyValueObservingOptionNew
+                                  context:nil];
+            }
+            [self updateRangeSliderMinimumRange];
+        }
+    }
+}
+
+#pragma mark - Observer
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    [self updateRangeSliderMinimumRange];
+}
+
+#pragma mark - Actions
+
+- (void)onRangeSliderValueChange:(id)sender {
+    float padding = self.rangeSlider.lowerHandleImageNormal.size.width / 2.0f;
+    float lowerValue = (self.rangeSlider.lowerCenter.x - padding) / [self lowerTotalWidth] * (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue);
+    padding = [self minimumUpperValueInPoints];
+    float upperValue = (self.rangeSlider.upperCenter.x - padding) / [self upperTotalWidth] * (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue);
+    if ([self.delegate respondsToSelector:@selector(rangeSliderAutomaticMinimumRangeHelper:onValuesChangeWithLowerValue:upperValue:)]) {
+        [self.delegate rangeSliderAutomaticMinimumRangeHelper:self
+                                 onValuesChangeWithLowerValue:lowerValue
+                                                   upperValue:upperValue];
+    }
+}
+
+#pragma mark - Internal methods
+
+- (float)minimumUpperValueInPoints {
+    return self.rangeSlider.lowerHandleImageNormal.size.width -
+            self.lowerRightTransparencyWidth +
+            self.rangeSlider.upperHandleImageNormal.size.width / 2.0f -
+            self.upperLeftTransparencyWidth;
+}
+
+- (float)maximumLowerValueInPoints {
+    return self.rangeSlider.frame.size.width -
+            self.rangeSlider.upperHandleImageNormal.size.width +
+            self.upperLeftTransparencyWidth -
+            self.rangeSlider.lowerHandleImageNormal.size.width / 2.0f +
+            self.lowerRightTransparencyWidth;
+}
+
+// These two do probably the same in the end... oh well..
+
+- (float)upperTotalWidth {
+    return self.rangeSlider.frame.size.width -
+            self.rangeSlider.upperHandleImageNormal.size.width / 2.0f -
+            [self minimumUpperValueInPoints];
+}
+
+- (float)lowerTotalWidth {
+    return [self maximumLowerValueInPoints] -
+            self.rangeSlider.lowerHandleImageNormal.size.width / 2.0f;
+}
+
+- (void)updateRangeSliderMinimumRange {
+    float totalWidth = (self.rangeSlider.frame.size.width -
+            self.rangeSlider.lowerHandleImageNormal.size.width / 2.0f -
+            self.rangeSlider.upperHandleImageNormal.size.width / 2.0f);
+    if (totalWidth > 0.0f) {
+        self.rangeSlider.minimumRange = ([self minimumUpperValueInPoints] - self.rangeSlider.lowerHandleImageNormal.size.width / 2.0f) / totalWidth * (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue);
+    }
+}
+
+- (void)dealloc {
+    self.rangeSlider = nil;
+}
+
+@end

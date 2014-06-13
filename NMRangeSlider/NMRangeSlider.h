@@ -84,3 +84,22 @@
 - (void) setLowerValue:(float) lowerValue upperValue:(float) upperValue animated:(BOOL)animated;
 
 @end
+
+@protocol NMRangeSliderAutomaticMinimumRangeHelperDelegate;
+
+@interface NMRangeSliderAutomaticMinimumRangeHelper : NSObject
+
+@property(nonatomic, strong) NMRangeSlider *rangeSlider;
+@property(nonatomic, assign) float lowerRightTransparencyWidth;
+@property(nonatomic, assign) float upperLeftTransparencyWidth;
+@property(nonatomic, weak) id<NMRangeSliderAutomaticMinimumRangeHelperDelegate> delegate;
+
+@end
+
+@protocol NMRangeSliderAutomaticMinimumRangeHelperDelegate<NSObject>
+
+- (void)rangeSliderAutomaticMinimumRangeHelper:(NMRangeSliderAutomaticMinimumRangeHelper *)rangeSliderAutomaticMinimumRangeHelper
+                  onValuesChangeWithLowerValue:(float)lowerValue
+                                    upperValue:(float)upperValue;
+
+@end
