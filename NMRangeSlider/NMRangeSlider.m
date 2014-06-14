@@ -474,8 +474,13 @@ NSUInteger DeviceSystemMajorVersion() {
     
     float xValue = ((self.bounds.size.width-thumbRect.size.width)*((value - _minimumValue) / (_maximumValue - _minimumValue)));
     thumbRect.origin = CGPointMake(xValue, (self.bounds.size.height/2.0f) - (thumbRect.size.height/2.0f));
-    
-    return CGRectIntegral(thumbRect);
+
+    thumbRect.origin.x = roundf(thumbRect.origin.x);
+    thumbRect.origin.y = roundf(thumbRect.origin.y);
+    thumbRect.size.width= roundf(thumbRect.size.width);
+    thumbRect.size.height= roundf(thumbRect.size.height);
+
+    return thumbRect;
 
 }
 
