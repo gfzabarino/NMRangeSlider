@@ -49,9 +49,14 @@
 // minimum value for right thumb
 @property(assign, nonatomic) float upperMinimumValue;
 
+@property (assign, nonatomic) UIEdgeInsets lowerTouchEdgeInsets;
+@property (assign, nonatomic) UIEdgeInsets upperTouchEdgeInsets;
 
 @property (assign, nonatomic) BOOL lowerHandleHidden;
 @property (assign, nonatomic) BOOL upperHandleHidden;
+
+@property (assign, nonatomic) float lowerHandleHiddenWidth;
+@property (assign, nonatomic) float upperHandleHiddenWidth;
 
 // Images, these should be set before the control is displayed.
 // If they are not set, then the default images are used.
