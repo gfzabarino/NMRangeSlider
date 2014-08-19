@@ -101,6 +101,10 @@
 @property(nonatomic, assign) float upperValue;
 @property(nonatomic, weak) id<NMRangeSliderAutomaticMinimumRangeHelperDelegate> delegate;
 
+- (void)setLowerValue:(float)lowerValue animated:(BOOL)animated;
+- (void)setUpperValue:(float)upperValue animated:(BOOL)animated;
+- (void)setLowerValue:(float)lowerValue upperValue:(float)upperValue animated:(BOOL)animated;
+
 @end
 
 @protocol NMRangeSliderAutomaticMinimumRangeHelperDelegate<NSObject>
