@@ -801,18 +801,18 @@ NSUInteger DeviceSystemMajorVersion() {
 - (void)setLowerValue:(float)lowerValue upperValue:(float)upperValue animated:(BOOL)animated {
     float translatedLowerValue = NAN;
     float translatedUpperValue = NAN;
-    if (!isnan(lowerValue)) {
-        _lowerValue = lowerValue;
-        float padding = self.rangeSlider.lowerHandleImageNormal.size.width / 2.0f;
-        float centerX = _lowerValue / (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue) * [self lowerTotalWidth] + padding;
-        translatedLowerValue = [self.rangeSlider lowerValueForCenterX:centerX];
-    }
     if (!isnan(upperValue)) {
         _upperValue = upperValue;
         float padding = [self minimumUpperValueInPoints];
         float centerX = _upperValue / (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue) * [self upperTotalWidth] + padding;
         self.rangeSlider.upperValue = [self.rangeSlider upperValueForCenterX:centerX];
         translatedUpperValue = [self.rangeSlider upperValueForCenterX:centerX];
+    }
+    if (!isnan(lowerValue)) {
+        _lowerValue = lowerValue;
+        float padding = self.rangeSlider.lowerHandleImageNormal.size.width / 2.0f;
+        float centerX = _lowerValue / (self.rangeSlider.maximumValue - self.rangeSlider.minimumValue) * [self lowerTotalWidth] + padding;
+        translatedLowerValue = [self.rangeSlider lowerValueForCenterX:centerX];
     }
     [self.rangeSlider setLowerValue:translatedLowerValue
                          upperValue:translatedUpperValue
